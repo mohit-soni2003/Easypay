@@ -1,5 +1,4 @@
-import mongoose from "mongoose";
-
+const mongoose = require("mongoose");
 
 const ledgerSchema = new mongoose.Schema({
 
@@ -30,7 +29,7 @@ const ledgerSchema = new mongoose.Schema({
         required: true
     },
 
-type: {
+    type: {
         type: String,
         enum: [
             "CREDIT",
@@ -50,7 +49,7 @@ type: {
     });
 
 
-export default mongoose.model(
+module.exports = mongoose.model(
     "Ledger",
     ledgerSchema
 );

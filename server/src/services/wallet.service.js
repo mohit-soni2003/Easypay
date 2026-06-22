@@ -1,4 +1,7 @@
 const walletRepo = require("../repositories/wallet.repo");
+const transactionRepo = require("../repositories/transaction.repo");
+const ledgerRepo = require("../repositories/ledger.repo");
+
 
 
 // ===============================
@@ -107,18 +110,17 @@ const debitWallet = async (walletId, amount) => {
 // ===============================
 // 6. Transfer Money (P2P)
 // ===============================
+const { v4: uuidv4 } = require("uuid");
+
 const transferMoney = async (fromWalletId, toWalletNumber, amount) => {
 
     if (amount <= 0) {
         throw new Error("Invalid transfer amount");
     }
 
-    const receiver = await walletRepo.getWalletByWalletNumber(toWalletNumber);
-
-    if (!receiver) {
-        throw new Error("Receiver wallet not found");
-    }
-
+    // ===============================
+    // 1. Get sender wallet
+    // ===============================
     const senderWallet = await walletRepo.getWalletById(fromWalletId);
 
     if (!senderWallet) {
@@ -129,24 +131,111 @@ const transferMoney = async (fromWalletId, toWalletNumber, amount) => {
         throw new Error("Sender wallet is not active");
     }
 
+    // ===============================
+    // 2. Get receiver wallet
+    // ===============================
+    const receiver = await walletRepo.getWalletByWalletNumber(toWalletNumber);
+
+    if (!receiver) {
+        throw new Error("Receiver wallet not found");
+    }
+
     if (receiver.status !== "ACTIVE") {
         throw new Error("Receiver wallet is not active");
     }
 
+    // ===============================
+    // 3. Balance check
+    // ===============================
     if (senderWallet.balance < amount) {
         throw new Error("Insufficient balance");
     }
 
-    // Step 1: debit sender
-    await walletRepo.decreaseWalletBalance(fromWalletId, amount);
+    // ===============================
+    // 4. Create Transaction (PENDING)
+    // ===============================
+    const transaction = await transactionRepo.createTransaction({
+        senderId: senderWallet.userId,
+        receiverId: receiver.userId,
 
-    // Step 2: credit receiver
-    await walletRepo.increaseWalletBalance(receiver._id, amount);
+        senderWalletId: senderWallet._id,
+        receiverWalletId: receiver._id,
 
-    return {
-        success: true,
-        message: "Transfer completed successfully"
-    };
+        amountEncrypted: String(amount),
+        transactionType: "WALLET_TO_WALLET",
+        status: "PENDING",
+        referenceId: uuidv4(),
+        description: `Transfer from ${senderWallet.walletNumber} to ${receiver.walletNumber}`
+    });
+
+    try {
+
+        // ===============================
+        // 5. Debit sender wallet
+        // ===============================
+        const updatedSender = await walletRepo.decreaseWalletBalance(
+            fromWalletId,
+            amount
+        );
+
+        // ===============================
+        // 6. Credit receiver wallet
+        // ===============================
+        const updatedReceiver = await walletRepo.increaseWalletBalance(
+            receiver._id,
+            amount
+        );
+
+        // ===============================
+        // 7. Create Ledger Entries
+        // ===============================
+
+        // Sender ledger (DEBIT)
+        await ledgerRepo.createLedgerEntry({
+            transactionId: transaction._id,
+            userId: senderWallet.userId,
+            walletId: senderWallet._id,
+            type: "DEBIT",
+            amountEncrypted: String(amount),
+            balanceAfterTransactionEncrypted: String(updatedSender.balance)
+        });
+
+        // Receiver ledger (CREDIT)
+        await ledgerRepo.createLedgerEntry({
+            transactionId: transaction._id,
+            userId: receiver.userId,
+            walletId: receiver._id,
+            type: "CREDIT",
+            amountEncrypted: String(amount),
+            balanceAfterTransactionEncrypted: String(updatedReceiver.balance)
+        });
+
+        // ===============================
+        // 8. Mark Transaction SUCCESS
+        // ===============================
+        await transactionRepo.updateTransactionStatus(
+            transaction._id,
+            "SUCCESS"
+        );
+
+        return {
+            success: true,
+            message: "Transfer completed successfully",
+            referenceId: transaction.referenceId
+        };
+
+    } catch (error) {
+
+        // ===============================
+        // 9. Mark Transaction FAILED
+        // ===============================
+        await transactionRepo.updateTransactionStatus(
+            transaction._id,
+            "FAILED"
+        );
+
+        throw new Error("Transfer failed: " + error.message);
+    }
 };
 
 
