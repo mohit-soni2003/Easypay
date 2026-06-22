@@ -1,38 +1,35 @@
-import mongoose from "mongoose";
-const walletSchema = new mongoose.Schema({
-    userId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "User",
-        required: true,
-        unique: true
-    },
+const mongoose = require("mongoose");
 
-    walletNumber: {
-        type: String,
-        unique: true,
-        required: true
-    },
+const walletSchema = new mongoose.Schema(
+    {
+        userId: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "User",
+            required: true,
+            unique: true
+        },
 
-    balanceEncrypted: {
-        type: String,
-        default: "0"
-    },
+        walletNumber: {
+            type: String,
+            unique: true,
+            required: true
+        },
 
-    status: {
-        type: String,
-        enum: [
-            "ACTIVE",
-            "BLOCKED"
-        ],
-        default: "ACTIVE"
-    }
-},
+        balance: {
+            type: Number,
+            default: 0
+        },
+
+        status: {
+            type: String,
+            enum: ["ACTIVE", "BLOCKED"],
+            default: "ACTIVE"
+        }
+    },
     {
         timestamps: true,
         versionKey: false
-    });
-
-export default mongoose.model(
-    "Wallet",
-    walletSchema
+    }
 );
+
+module.exports = mongoose.model("Wallet", walletSchema);
