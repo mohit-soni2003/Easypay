@@ -1,4 +1,5 @@
-const { signupService } = require("../services/auth.service");
+const { signupService, signinService } = require("../services/auth.service");
+const setTokenCookie  =  require("../utility/setCookies");
 
 const signup = async (req, res) => {
     console.log("Signup request body:", req.body);
@@ -19,4 +20,29 @@ const signup = async (req, res) => {
     }
 };
 
-module.exports = { signup };
+const signin = async (req, res) => {
+
+    try {
+
+        const result = await signinService(req.body);
+
+        setTokenCookie(res, result.token);
+
+
+        res.status(200).json({
+            success: true,
+            message: "User signed in successfully",
+            data: result
+        });
+
+    } catch (error) {
+
+        res.status(400).json({
+            success: false,
+            message: error.message
+        });
+
+    }
+};
+
+module.exports = { signup, signin };

@@ -1,0 +1,65 @@
+SIGNUP API
+
+Route:
+POST /api/auth/signup
+
+Input:
+{
+  "firstName": "Mohit",
+  "lastName": "Soni",
+  "email": "mohit@gmail.com",
+  "mobileNumber": "9876543210",
+  "password": "123456"
+}
+
+Output:
+{
+  "success": true,
+  "message": "User registered successfully",
+  "data": {
+    "_id": "user_id",
+    "firstName": "Mohit",
+    "lastName": "Soni",
+    "email": "mohit@gmail.com",
+    "mobileNumber": "9876543210"
+  }
+}
+
+---------------------------------------------------------------------------------------------------------
+
+SIGNIN API
+
+Route:
+POST /api/auth/signin
+
+Input:
+{
+  "email": "mohit@gmail.com",
+  "password": "123456"
+}
+
+Output (Success):
+{
+  "success": true,
+  "message": "User signed in successfully",
+  "data": {
+    "user": {
+      "_id": "user_id",
+      "firstName": "Mohit",
+      "lastName": "Soni",
+      "email": "mohit@gmail.com",
+      "mobileNumber": "9876543210",
+      "role": "user",
+      "status": "active"
+    }
+  }
+}
+
+Output (Failure):
+{
+  "success": false,
+  "message": "Invalid credentials"
+}
+
+Cookie:
+token = JWT (httpOnly, 7 days expiry)

@@ -73,9 +73,12 @@ const userSchema = new mongoose.Schema(
 
         loginAttempts: {
             type: Number,
-            default: 0,
+            default: 0
         },
 
+        lockUntil: {
+            type: Date
+        },
         tokenVersion: {    //This allows "logout all devices".
             type: Number,
             default: 0
