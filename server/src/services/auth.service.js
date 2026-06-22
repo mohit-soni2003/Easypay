@@ -1,11 +1,7 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
-const {
-    createUser,
-    findUserByEmail,
-    findUserByMobile
-} = require("../repositories/user.repo");
+const {  createUser,findUserByEmail,findUserByMobile} = require("../repositories/user.repo");
 
 const signupService = async (data) => {
 

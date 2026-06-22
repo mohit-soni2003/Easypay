@@ -4,14 +4,15 @@ require("dotenv").config();
 
 
 
-
 const port =  process.env.PORT||3000;
 const app = express()
 connectDB();
 
+
 app.use(express.json());
 
 app.use("/auth",require("./src/routes/authRoutes"))
+app.use("/bank",require("./src/routes/bank.route"))
 
 
 app.get("/", (req,res)=>{

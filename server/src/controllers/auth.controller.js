@@ -23,25 +23,18 @@ const signup = async (req, res) => {
 const signin = async (req, res) => {
 
     try {
-
         const result = await signinService(req.body);
-
         setTokenCookie(res, result.token);
-
-
         res.status(200).json({
             success: true,
             message: "User signed in successfully",
             data: result
         });
-
     } catch (error) {
-
         res.status(400).json({
             success: false,
             message: error.message
         });
-
     }
 };
 
