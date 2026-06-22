@@ -1,10 +1,11 @@
 const express = require("express");
-const user = require("../models/userModel")
-
 const router = express.Router();
 
-router.get("/signup",(req,res)=>{
-    res.send("Signup route hitted")
-})
+const {signup} = require("../controllers/auth.controller")
+
+router.post("/signup", signup); // firstName, lastName, email, mobile, password
+router.get("/signup", (req, res) => {
+    res.json({ message: "GET request for signup" });
+}); // firstName, lastName, email, mobile, password
 
 module.exports = router;

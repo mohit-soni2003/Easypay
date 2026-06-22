@@ -1,26 +1,23 @@
-import { User } from "../models/User.js";
+const { User } = require("../models/userModel");
 
 
-export const createUser = async(data)=>{
-
+const createUser = async(data)=>{
     return await User.create(data);
-
 };
 
 
-export const findUserByEmail = async(email)=>{
-
-    return await User.findOne({
-        email
-    });
-
+const findUserByEmail = async(email)=>{
+    return await User.findOne({email});
 };
 
 
-export const findUserByMobile = async(mobile)=>{
+const findUserByMobile = async(mobileNumber)=>{
+    return await User.findOne({mobileNumber});
+};
 
-    return await User.findOne({
-        mobile
-    });
 
+module.exports = {
+    createUser,
+    findUserByEmail,
+    findUserByMobile
 };

@@ -1,4 +1,0 @@
-createSession()
-revokeSession()
-revokeAllSessions()
-updateLastActivity()
