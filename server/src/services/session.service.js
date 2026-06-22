@@ -1,0 +1,4 @@
+createSession()
+revokeSession()
+revokeAllSessions()
+updateLastActivity()
