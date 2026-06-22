@@ -13,6 +13,7 @@ app.use(express.json());
 
 app.use("/auth",require("./src/routes/authRoutes"))
 app.use("/bank",require("./src/routes/bank.route"))
+app.use("/core-bank/account",require("./src/routes/coreBankAccount.route"))
 
 
 app.get("/", (req,res)=>{
@@ -21,8 +22,6 @@ app.get("/", (req,res)=>{
 app.get("/test", (req,res)=>{
     res.send("SERVER  IS RUNNING FINE ON THE TEST COMPLETED....")
 })
-
-
 
 
 
