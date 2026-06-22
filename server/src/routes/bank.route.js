@@ -7,6 +7,6 @@ const {
 } = require("../controllers/bank.controller");
 
 router.get("/active", getAllActiveBanksController);
-router.get("/search", searchBanksController);
+router.get("/search", searchBanksController); 
 
 module.exports = router;

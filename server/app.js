@@ -14,6 +14,7 @@ app.use(express.json());
 app.use("/auth",require("./src/routes/authRoutes"))
 app.use("/bank",require("./src/routes/bank.route"))
 app.use("/core-bank/account",require("./src/routes/coreBankAccount.route"))
+app.use("/linked-bank/account",require("./src/routes/linkedbankAcc.route"))
 
 
 app.get("/", (req,res)=>{

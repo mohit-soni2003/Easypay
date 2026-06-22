@@ -15,7 +15,13 @@ const getAccountByAccountNumberAndIfsc = async (accountNumberEncrypted, ifscCode
   });
 };
 
+// 3. Find account by its Database ID (ObjectId)
+const getAccountById = async (accountId) => {
+  return await CoreBankAccount.findById(accountId).populate("bankId");
+};
+
 module.exports = {
   getAccountByMobileNumber,
-  getAccountByAccountNumberAndIfsc
+  getAccountByAccountNumberAndIfsc,
+  getAccountById
 };
